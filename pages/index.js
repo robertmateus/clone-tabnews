@@ -1,13 +1,5 @@
 function Home() {
-  return <h1>Maria, eu Te Amooo....</h1>;
-}
-
-function teste() {
-  console.log("identação errada");
-}
-
-function teste2() {
-  console.log("teste");
+  return <h1>Teste...</h1>;
 }
 
 export default Home;

@@ -1,11 +1,12 @@
-name: Automated Tests
+name: Prettier
 
-on: pull_request
+on:
+  pull_request:
 
 jobs:
-  jest:
-    name: jest Ubuntu
+  prettier:
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v4
 
@@ -14,7 +15,4 @@ jobs:
           node-version: "lts/hydrogen"
 
       - run: npm ci
-
-      - uses: docker/setup-buildx-action@v3
-
-      - run: npm test
+      - run: npm run lint:prettier:check

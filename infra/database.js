@@ -20,8 +20,11 @@ async function query(queryObject) {
   } catch (error) {
     console.log("DB ERROR:", error);
     throw error;
+    // No seu bloco finally
   } finally {
-    await client.end();
+    if (client) {
+      await client.end();
+    }
   }
 }
 

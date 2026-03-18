@@ -13,7 +13,7 @@ describe("GET /api/v1/migrations", () => {
       const responseBody = await response.json();
 
       // valida que é uma data ISO válida
-      expect(Number.isNaN(Date.parse(responseBody.update_at))).toBe(false);
+      expect(Number.isNaN(Date.parse(responseBody.updated_at))).toBe(false);
 
       expect(responseBody.database.version).toBe("16.0");
       expect(responseBody.database.max_connections).toBe(100);

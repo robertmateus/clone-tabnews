@@ -11,7 +11,8 @@ export default function StatusPage() {
     <>
       <h1>Status</h1>
       <UpdatedAt />
-      <Database />
+      <h1>Database</h1>
+      <DatabaseStatus />
     </>
   );
 }
@@ -29,26 +30,22 @@ function UpdatedAt() {
   return <div>Última atualização: {updatedAtText}</div>;
 }
 
-function Database() {
-  const { isLoading, data } = useSWR("/api/v1/status", fetchAPI);
+function DatabaseStatus() {
+  const { isLoading, data } = useSWR("/api/v1/status", fetchAPI, {
+    refreshInterval: 2000,
+  });
 
-  let versionDatabase = "Carregando...";
-  let maxConnections = "Carregando...";
-  let openedConnections = "Carregando";
+  let databaseStatus = "Carregando...";
 
   if (!isLoading && data) {
-    versionDatabase = JSON.stringify(data.database.version);
-    maxConnections = JSON.stringify(data.database.max_connections);
-    openedConnections = JSON.stringify(data.database.opened_connections);
+    databaseStatus = (
+      <>
+        <div>Versão: {data.database.version}</div>
+        <div>Conecções abertas: {data.database.opened_connections}</div>
+        <div>Máximo de conecções: {data.database.max_connections}</div>
+      </>
+    );
   }
 
-  return (
-    <div>
-      <ul>
-        <li>Versão: {versionDatabase}</li>
-        <li>Maxímo de Conecções: {maxConnections}</li>
-        <li>Conecções Abertas: {openedConnections}</li>
-      </ul>
-    </div>
-  );
+  return <div>{databaseStatus}</div>;
 }

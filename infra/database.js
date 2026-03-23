@@ -18,13 +18,12 @@ async function query(queryObject) {
     const result = await client.query(queryObject);
     return result;
   } catch (error) {
-    console.log("DB ERROR:", error);
+    console.log("\n Erro dentro do database.js:");
+    console.log(error);
     throw error;
     // No seu bloco finally
   } finally {
-    if (client) {
-      await client.end();
-    }
+    await client?.end();
   }
 }
 

@@ -1,4 +1,5 @@
 import { Client } from "pg";
+import { ServiceError } from "infra/errors.js";
 
 function getSSLValues() {
   if (process.env.POSTGRES_CA) {
@@ -18,10 +19,11 @@ async function query(queryObject) {
     const result = await client.query(queryObject);
     return result;
   } catch (error) {
-    console.log("\n Erro dentro do database.js:");
-    console.log(error);
-    throw error;
-    // No seu bloco finally
+    const serviceErrorObject = new ServiceError({
+      message: "Erro na conecção com Banco ou na Query.",
+      cause: error,
+    });
+    throw serviceErrorObject;
   } finally {
     await client?.end();
   }

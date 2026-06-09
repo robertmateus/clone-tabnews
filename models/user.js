@@ -33,6 +33,37 @@ async function findOneByUsername(username) {
   }
 }
 
+async function findOneByEmail(email) {
+  const userFound = await runSelectQuery(email);
+
+  return userFound;
+
+  async function runSelectQuery(email) {
+    const results = await database.query({
+      text: `
+        SELECT
+          *
+        FROM
+          users
+        WHERE
+          LOWER(email) = LOWER($1)
+        LIMIT
+          1
+        ;`,
+      values: [email],
+    });
+
+    if (results.rowCount === 0) {
+      throw new NotFoundError({
+        message: "O email informado não foi encontrado no sistema.",
+        action: "Verifique se o email está digitado corretamente.",
+      });
+    }
+
+    return results.rows[0];
+  }
+}
+
 async function create(userInputValues) {
   await validateUniqueUsername(userInputValues.username);
   await validateUniqueEmail(userInputValues.email);
@@ -64,15 +95,15 @@ async function create(userInputValues) {
 async function update(username, userInputValues) {
   const currentUser = await findOneByUsername(username);
 
-  if ("username" in userInputValues) {
+  if (userInputValues.username) {
     await validateUniqueUsername(userInputValues.username);
   }
 
-  if ("email" in userInputValues) {
+  if (userInputValues.email) {
     await validateUniqueEmail(userInputValues.email);
   }
 
-  if ("password" in userInputValues) {
+  if (userInputValues.password) {
     await hashPasswordInObject(userInputValues);
   }
 
@@ -151,6 +182,8 @@ async function validateUniqueEmail(email) {
 }
 
 async function hashPasswordInObject(userInputValues) {
+  if (!userInputValues.password) return;
+
   const hashedPassword = await password.hash(userInputValues.password);
   userInputValues.password = hashedPassword;
 }
@@ -158,6 +191,7 @@ async function hashPasswordInObject(userInputValues) {
 const user = {
   create,
   findOneByUsername,
+  findOneByEmail,
   update,
 };
 
